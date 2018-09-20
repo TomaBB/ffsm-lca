@@ -1,0 +1,37 @@
+Policy;Index;Products;Year;Quantities Qw;Quantities Xw;Quantities Qp;Quantities Mp
+SP;myindex;BOF;2020;1.451;0.624;0;0
+SP;myindex;BOR;2020;3.709;0.348;0;0
+SP;myindex;BIBE;2020;8.053;0.704;0;0
+SP;myindex;bois-energie;2020;0;0;5.657;0.006
+SP;myindex;Fsciages;2020;0;0;0.205;0.068
+SP;myindex;Rsciages;2020;0;0;0.872;0.375
+SP;myindex;placages;2020;0;0;0.031;0.069
+SP;myindex;pate;2020;0;0;0.528;0.535
+SP;myindex;panneaux;2020;0;0;0.321;0.168
+Sub Conso;myindex1;BOF;2020;2.4;0.507;0;0
+Sub Conso;myindex1;BOR;2020;4.593;0.279;0;0
+Sub Conso;myindex1;BIBE;2020;6.246;0.675;0;0
+Sub Conso;myindex1;bois-energie;2020;0;0;6.094;0.006
+Sub Conso;myindex1;Fsciages;2020;0;0;0.353;0.124
+Sub Conso;myindex1;Rsciages;2020;0;0;1.115;0.532
+Sub Conso;myindex1;placages;2020;0;0;0.037;0.089
+Sub Conso;myindex1;pate;2020;0;0;0.565;0.525
+Sub Conso;myindex1;panneaux;2020;0;0;0.327;0.168
+Exp Restr;myindex2;BOF;2020;1.458;0.501;0;0
+Exp Restr;myindex2;BOR;2020;3.719;0.269;0;0
+Exp Restr;myindex2;BIBE;2020;8.132;0.706;0;0
+Exp Restr;myindex2;bois-energie;2020;0;0;5.63;0.006
+Exp Restr;myindex2;Fsciages;2020;0;0;0.206;0.068
+Exp Restr;myindex2;Rsciages;2020;0;0;0.878;0.374
+Exp Restr;myindex2;placages;2020;0;0;0.031;0.069
+Exp Restr;myindex2;pate;2020;0;0;0.525;0.536
+Exp Restr;myindex2;panneaux;2020;0;0;0.321;0.168
+Sub Transf;myindex3;BOF;2020;2.518;0.493;0;0
+Sub Transf;myindex3;BOR;2020;4.508;0.285;0;0
+Sub Transf;myindex3;BIBE;2020;6.378;0.677;0;0
+Sub Transf;myindex3;bois-energie;2020;0;0;6.061;0.006
+Sub Transf;myindex3;Fsciages;2020;0;0;0.333;0.068
+Sub Transf;myindex3;Rsciages;2020;0;0;1.084;0.346
+Sub Transf;myindex3;placages;2020;0;0;0.113;0.05
+Sub Transf;myindex3;pate;2020;0;0;0.562;0.526
+Sub Transf;myindex3;panneaux;2020;0;0;0.326;0.168

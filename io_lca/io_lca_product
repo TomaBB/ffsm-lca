@@ -1,0 +1,345 @@
+#set directory
+
+#cd("C:\Users\tbeaussier\Google Drive\These Thomas B\Construction modèle\IO-LCA\Final Demand separated outputs"=homedir())
+
+#importing the Final demand matrix
+  #for the subconso policy
+WoodPImport_SubConso_File= "C:\\Users\\tbeaussier\\Google Drive\\These Thomas B\\Construction modèle\\IO-LCA\\Final Demand separated outputs\\mrFinalDemand_SubConso_WoodPImport.csv";
+WoodPDom_SubConso_File= "mrFinalDemand_SubConso_WoodPDom.csv";
+PulpImport_SubConso_File= "mrFinalDemand_SubConso_PulpImport.csv";
+PulpDom_SubConso_File= "mrFinalDemand_SubConso_PulpDom.csv";
+FuelWoodDom_SubConso_File= "mrFinalDemand_SubConso_FuelWoodDom.csv";
+ForestryExport_SubConso_File= "mrFinalDemand_SubConso_ForestryExport.csv";
+
+  #for the substransf policy
+WoodPImport_SubTransf_File= "mrFinalDemand_SubTransf_WoodPImport.csv";
+WoodPDom_SubTransf_File= "mrFinalDemand_SubTransf_WoodPDom.csv";
+PulpImport_SubTransf_File= "mrFinalDemand_SubTransf_PulpImport.csv";
+PulpDom_SubTransf_File= "mrFinalDemand_SubTransf_PulpDom.csv";
+FuelWoodDom_SubTransf_File= "mrFinalDemand_SubTransf_FuelWoodDom.csv";
+ForestryExport_SubTransf_File= "mrFinalDemand_SubTransf_ForestryExport.csv";
+
+
+fd_SubConso1 = convert(Array{Float64,2},readdlm(WoodPImport_SubConso_File,';',skipstart=2)[:,4:end]);
+fd_SubConso2 = convert(Array{Float64,2},readdlm(WoodPDom_SubConso_File,';',skipstart=2)[:,4:end]);
+fd_SubConso3 = convert(Array{Float64,2},readdlm(PulpImport_SubConso_File,';',skipstart=2)[:,4:end]);
+fd_SubConso4 = convert(Array{Float64,2},readdlm(PulpDom_SubConso_File,';',skipstart=2)[:,4:end]);
+fd_SubConso5 = convert(Array{Float64,2},readdlm(FuelWoodDom_SubConso_File,';',skipstart=2)[:,4:end]);
+fd_SubConso6 = convert(Array{Float64,2},readdlm(ForestryExport_SubConso_File,';',skipstart=2)[:,4:end]);
+
+fd_SubTransf1 = convert(Array{Float64,2},readdlm(WoodPImport_SubTransf_File,';',skipstart=2)[:,4:end]);
+fd_SubTransf2 = convert(Array{Float64,2},readdlm(WoodPDom_SubTransf_File,';',skipstart=2)[:,4:end]);
+fd_SubTransf3 = convert(Array{Float64,2},readdlm(PulpImport_SubTransf_File,';',skipstart=2)[:,4:end]);
+fd_SubTransf4 = convert(Array{Float64,2},readdlm(PulpDom_SubTransf_File,';',skipstart=2)[:,4:end]);
+fd_SubTransf5 = convert(Array{Float64,2},readdlm(FuelWoodDom_SubTransf_File,';',skipstart=2)[:,4:end]);
+fd_SubTransf6 = convert(Array{Float64,2},readdlm(ForestryExport_SubTransf_File,';',skipstart=2)[:,4:end]);
+
+
+#importing the Leotineff inverse matrix
+LinvFile = "L_inverse.txt";
+Linv = readcsv(LinvFile);
+
+#calculate the X matrixes
+X_SubConso1 = Linv * fd_SubConso1 ;
+X_SubConso2 = Linv * fd_SubConso2 ;
+X_SubConso3 = Linv * fd_SubConso3 ;
+X_SubConso4 = Linv * fd_SubConso4 ;
+X_SubConso5 = Linv * fd_SubConso5 ;
+X_SubConso6 = Linv * fd_SubConso6 ;
+
+X_SubTransf1 = Linv * fd_SubTransf1 ;
+X_SubTransf2 = Linv * fd_SubTransf2 ;
+X_SubTransf3 = Linv * fd_SubTransf3 ;
+X_SubTransf4 = Linv * fd_SubTransf4 ;
+X_SubTransf5 = Linv * fd_SubTransf5 ;
+X_SubTransf6 = Linv * fd_SubTransf6 ;
+
+
+#importing Environmental impact files
+Bemissions_File = "mrEmissions_version2.2.2.txt";
+Bmaterials_File = "mrMaterials_version2.2.2.txt";
+Bresources_File = "mrResources_version2.2.2.txt";
+
+#converting matrix
+Bemissions = convert(Array{Float64,2},readdlm(Bemissions_File,'\t', skipstart=2)[:,4:end]);
+Bmaterials = convert(Array{Float64,2},readdlm(Bmaterials_File,'\t', skipstart=2)[:,3:end]);
+Bresources = convert(Array{Float64,2},readdlm(Bresources_File,'\t', skipstart=2)[:,4:end]);
+
+#calculate emissions impacts for each policy
+
+Emissions_SubConso1 = Bemissions * X_SubConso1
+Emissions_SubConso2 = Bemissions * X_SubConso2
+Emissions_SubConso3 = Bemissions * X_SubConso3
+Emissions_SubConso4 = Bemissions * X_SubConso4
+Emissions_SubConso5 = Bemissions * X_SubConso5
+Emissions_SubConso6 = Bemissions * X_SubConso6
+
+Emissions_SubTransf1 = Bemissions * X_SubTransf1
+Emissions_SubTransf2 = Bemissions * X_SubTransf2
+Emissions_SubTransf3 = Bemissions * X_SubTransf3
+Emissions_SubTransf4 = Bemissions * X_SubTransf4
+Emissions_SubTransf5 = Bemissions * X_SubTransf5
+Emissions_SubTransf6 = Bemissions * X_SubTransf6
+
+#calculate materials impacts for each policy
+
+Materials_SubConso1 = Bmaterials * X_SubConso1
+Materials_SubConso2 = Bmaterials * X_SubConso2
+Materials_SubConso3 = Bmaterials * X_SubConso3
+Materials_SubConso4 = Bmaterials * X_SubConso4
+Materials_SubConso5 = Bmaterials * X_SubConso5
+Materials_SubConso6 = Bmaterials * X_SubConso6
+
+Materials_SubTransf1 = Bmaterials * X_SubTransf1
+Materials_SubTransf2 = Bmaterials * X_SubTransf2
+Materials_SubTransf3 = Bmaterials * X_SubTransf3
+Materials_SubTransf4 = Bmaterials * X_SubTransf4
+Materials_SubTransf5 = Bmaterials * X_SubTransf5
+Materials_SubTransf6 = Bmaterials * X_SubTransf6
+
+
+#calculate resources impacts for each policy
+
+Resources_SubConso1 = Bresources * X_SubConso1
+Resources_SubConso2 = Bresources * X_SubConso2
+Resources_SubConso3 = Bresources * X_SubConso3
+Resources_SubConso4 = Bresources * X_SubConso4
+Resources_SubConso5 = Bresources * X_SubConso5
+Resources_SubConso6 = Bresources * X_SubConso6
+
+Resources_SubTransf1 = Bresources * X_SubTransf1
+Resources_SubTransf2 = Bresources * X_SubTransf2
+Resources_SubTransf3 = Bresources * X_SubTransf3
+Resources_SubTransf4 = Bresources * X_SubTransf4
+Resources_SubTransf5 = Bresources * X_SubTransf5
+Resources_SubTransf6 = Bresources * X_SubTransf6
+
+#converting in a column vector Emissions
+
+
+TotEmissions_SubConso1=zeros(size(Emissions_SubConso1)[1], 1)
+for i=1:size(Emissions_SubConso1)[1]
+    TotEmissions_SubConso1[i,1]=sum(Emissions_SubConso1[i,:])
+end
+
+TotEmissions_SubConso2=zeros(size(Emissions_SubConso2)[1], 1)
+for i=1:size(Emissions_SubConso2)[1]
+    TotEmissions_SubConso2[i,1]=sum(Emissions_SubConso2[i,:])
+end
+
+TotEmissions_SubConso3=zeros(size(Emissions_SubConso3)[1], 1)
+for i=1:size(Emissions_SubConso3)[1]
+    TotEmissions_SubConso3[i,1]=sum(Emissions_SubConso3[i,:])
+end
+TotEmissions_SubConso4=zeros(size(Emissions_SubConso4)[1], 1)
+for i=1:size(Emissions_SubConso4)[1]
+    TotEmissions_SubConso4[i,1]=sum(Emissions_SubConso4[i,:])
+end
+
+TotEmissions_SubConso5=zeros(size(Emissions_SubConso5)[1], 1)
+for i=1:size(Emissions_SubConso5)[1]
+    TotEmissions_SubConso5[i,1]=sum(Emissions_SubConso5[i,:])
+end
+
+TotEmissions_SubConso6=zeros(size(Emissions_SubConso6)[1], 1)
+for i=1:size(Emissions_SubConso6)[1]
+    TotEmissions_SubConso6[i,1]=sum(Emissions_SubConso6[i,:])
+end
+
+
+
+TotEmissions_SubTransf1=zeros(size(Emissions_SubTransf1)[1], 1)
+for i=1:size(Emissions_SubTransf1)[1]
+    TotEmissions_SubTransf1[i,1]=sum(Emissions_SubTransf1[i,:])
+end
+
+TotEmissions_SubTransf2=zeros(size(Emissions_SubTransf2)[1], 1)
+for i=1:size(Emissions_SubTransf2)[1]
+    TotEmissions_SubTransf2[i,1]=sum(Emissions_SubTransf2[i,:])
+end
+
+TotEmissions_SubTransf3=zeros(size(Emissions_SubTransf3)[1], 1)
+for i=1:size(Emissions_SubTransf3)[1]
+    TotEmissions_SubTransf3[i,1]=sum(Emissions_SubTransf3[i,:])
+end
+
+TotEmissions_SubTransf4=zeros(size(Emissions_SubTransf4)[1], 1)
+for i=1:size(Emissions_SubTransf4)[1]
+    TotEmissions_SubTransf4[i,1]=sum(Emissions_SubTransf4[i,:])
+end
+
+TotEmissions_SubTransf5=zeros(size(Emissions_SubTransf5)[1], 1)
+for i=1:size(Emissions_SubTransf5)[1]
+    TotEmissions_SubTransf5[i,1]=sum(Emissions_SubTransf5[i,:])
+end
+
+TotEmissions_SubTransf6=zeros(size(Emissions_SubTransf6)[1], 1)
+for i=1:size(Emissions_SubTransf6)[1]
+    TotEmissions_SubTransf6[i,1]=sum(Emissions_SubTransf6[i,:])
+end
+
+writecsv("TotEmissions_SubConso1", TotEmissions_SubConso1);
+writecsv("TotEmissions_SubConso2", TotEmissions_SubConso2);
+writecsv("TotEmissions_SubConso3", TotEmissions_SubConso3);
+writecsv("TotEmissions_SubConso4", TotEmissions_SubConso4);
+writecsv("TotEmissions_SubConso5", TotEmissions_SubConso5);
+writecsv("TotEmissions_SubConso6", TotEmissions_SubConso6);
+
+writecsv("TotEmissions_SubTransf1", TotEmissions_SubTransf1);
+writecsv("TotEmissions_SubTransf2", TotEmissions_SubTransf2);
+writecsv("TotEmissions_SubTransf3", TotEmissions_SubTransf3);
+writecsv("TotEmissions_SubTransf4", TotEmissions_SubTransf4);
+writecsv("TotEmissions_SubTransf5", TotEmissions_SubTransf5);
+writecsv("TotEmissions_SubTransf6", TotEmissions_SubTransf6);
+
+#converting Materials in a column vector
+
+
+
+TotMaterials_SubConso1=zeros(size(Materials_SubConso1)[1], 1)
+for i=1:size(Materials_SubConso1)[1]
+    TotMaterials_SubConso1[i,1]=sum(Materials_SubConso1[i,:])
+end
+TotMaterials_SubConso2=zeros(size(Materials_SubConso2)[1], 1)
+for i=1:size(Materials_SubConso2)[1]
+    TotMaterials_SubConso2[i,1]=sum(Materials_SubConso2[i,:])
+end
+TotMaterials_SubConso3=zeros(size(Materials_SubConso3)[1], 1)
+for i=1:size(Materials_SubConso3)[1]
+    TotMaterials_SubConso3[i,1]=sum(Materials_SubConso3[i,:])
+end
+TotMaterials_SubConso4=zeros(size(Materials_SubConso4)[1], 1)
+for i=1:size(Materials_SubConso4)[1]
+    TotMaterials_SubConso4[i,1]=sum(Materials_SubConso4[i,:])
+end
+TotMaterials_SubConso5=zeros(size(Materials_SubConso5)[1], 1)
+for i=1:size(Materials_SubConso5)[1]
+    TotMaterials_SubConso5[i,1]=sum(Materials_SubConso5[i,:])
+end
+TotMaterials_SubConso6=zeros(size(Materials_SubConso6)[1], 1)
+for i=1:size(Materials_SubConso6)[1]
+    TotMaterials_SubConso6[i,1]=sum(Materials_SubConso6[i,:])
+end
+
+
+TotMaterials_SubTransf1=zeros(size(Materials_SubTransf1)[1], 1)
+for i=1:size(Materials_SubTransf1)[1]
+    TotMaterials_SubTransf1[i,1]=sum(Materials_SubTransf1[i,:])
+end
+TotMaterials_SubTransf2=zeros(size(Materials_SubTransf2)[1], 1)
+for i=1:size(Materials_SubTransf2)[1]
+    TotMaterials_SubTransf2[i,1]=sum(Materials_SubTransf2[i,:])
+end
+TotMaterials_SubTransf3=zeros(size(Materials_SubTransf3)[1], 1)
+for i=1:size(Materials_SubTransf3)[1]
+    TotMaterials_SubTransf3[i,1]=sum(Materials_SubTransf3[i,:])
+end
+TotMaterials_SubTransf4=zeros(size(Materials_SubTransf4)[1], 1)
+for i=1:size(Materials_SubTransf4)[1]
+    TotMaterials_SubTransf4[i,1]=sum(Materials_SubTransf4[i,:])
+end
+TotMaterials_SubTransf5=zeros(size(Materials_SubTransf5)[1], 1)
+for i=1:size(Materials_SubTransf5)[1]
+    TotMaterials_SubTransf5[i,1]=sum(Materials_SubTransf5[i,:])
+end
+TotMaterials_SubTransf6=zeros(size(Materials_SubTransf6)[1], 1)
+for i=1:size(Materials_SubTransf6)[1]
+    TotMaterials_SubTransf6[i,1]=sum(Materials_SubTransf6[i,:])
+end
+
+
+
+writecsv("TotMaterials_SubConso1", TotMaterials_SubConso1);
+writecsv("TotMaterials_SubConso2", TotMaterials_SubConso2);
+writecsv("TotMaterials_SubConso3", TotMaterials_SubConso3);
+writecsv("TotMaterials_SubConso4", TotMaterials_SubConso4);
+writecsv("TotMaterials_SubConso5", TotMaterials_SubConso5);
+writecsv("TotMaterials_SubConso6", TotMaterials_SubConso6);
+
+writecsv("TotMaterials_SubTransf1", TotMaterials_SubTransf1);
+writecsv("TotMaterials_SubTransf2", TotMaterials_SubTransf2);
+writecsv("TotMaterials_SubTransf3", TotMaterials_SubTransf3);
+writecsv("TotMaterials_SubTransf4", TotMaterials_SubTransf4);
+writecsv("TotMaterials_SubTransf5", TotMaterials_SubTransf5);
+writecsv("TotMaterials_SubTransf6", TotMaterials_SubTransf6);
+
+
+
+#converting Resources ub a column vector
+
+
+
+TotResources_SubConso1=zeros(size(Resources_SubConso1)[1], 1)
+for i=1:size(Resources_SubConso1)[1]
+    TotResources_SubConso1[i,1]=sum(Resources_SubConso1[i,:])
+end
+
+TotResources_SubConso2=zeros(size(Resources_SubConso2)[1], 1)
+for i=1:size(Resources_SubConso2)[1]
+    TotResources_SubConso2[i,1]=sum(Resources_SubConso2[i,:])
+end
+
+TotResources_SubConso3=zeros(size(Resources_SubConso3)[1], 1)
+for i=1:size(Resources_SubConso3)[1]
+    TotResources_SubConso3[i,1]=sum(Resources_SubConso3[i,:])
+end
+
+TotResources_SubConso4=zeros(size(Resources_SubConso4)[1], 1)
+for i=1:size(Resources_SubConso4)[1]
+    TotResources_SubConso4[i,1]=sum(Resources_SubConso4[i,:])
+end
+
+TotResources_SubConso5=zeros(size(Resources_SubConso5)[1], 1)
+for i=1:size(Resources_SubConso5)[1]
+    TotResources_SubConso5[i,1]=sum(Resources_SubConso5[i,:])
+end
+
+TotResources_SubConso6=zeros(size(Resources_SubConso6)[1], 1)
+for i=1:size(Resources_SubConso6)[1]
+    TotResources_SubConso6[i,1]=sum(Resources_SubConso6[i,:])
+end
+
+
+
+
+TotResources_SubTransf1=zeros(size(Resources_SubTransf1)[1], 1)
+for i=1:size(Resources_SubTransf1)[1]
+    TotResources_SubTransf1[i,1]=sum(Resources_SubTransf1[i,:])
+end
+TotResources_SubTransf2=zeros(size(Resources_SubTransf2)[1], 1)
+for i=1:size(Resources_SubTransf2)[1]
+    TotResources_SubTransf2[i,1]=sum(Resources_SubTransf2[i,:])
+end
+TotResources_SubTransf3=zeros(size(Resources_SubTransf3)[1], 1)
+for i=1:size(Resources_SubTransf3)[1]
+    TotResources_SubTransf3[i,1]=sum(Resources_SubTransf3[i,:])
+end
+TotResources_SubTransf4=zeros(size(Resources_SubTransf4)[1], 1)
+for i=1:size(Resources_SubTransf4)[1]
+    TotResources_SubTransf4[i,1]=sum(Resources_SubTransf4[i,:])
+end
+TotResources_SubTransf5=zeros(size(Resources_SubTransf5)[1], 1)
+for i=1:size(Resources_SubTransf5)[1]
+    TotResources_SubTransf5[i,1]=sum(Resources_SubTransf5[i,:])
+end
+TotResources_SubTransf6=zeros(size(Resources_SubTransf6)[1], 1)
+for i=1:size(Resources_SubTransf6)[1]
+    TotResources_SubTransf6[i,1]=sum(Resources_SubTransf6[i,:])
+end
+
+
+
+
+writecsv("TotResources_SubConso1", TotResources_SubConso1);
+writecsv("TotResources_SubConso2", TotResources_SubConso2);
+writecsv("TotResources_SubConso3", TotResources_SubConso3);
+writecsv("TotResources_SubConso4", TotResources_SubConso4);
+writecsv("TotResources_SubConso5", TotResources_SubConso5);
+writecsv("TotResources_SubConso6", TotResources_SubConso6);
+
+writecsv("TotResources_SubTransf1", TotResources_SubTransf1);
+writecsv("TotResources_SubTransf2", TotResources_SubTransf2);
+writecsv("TotResources_SubTransf3", TotResources_SubTransf3);
+writecsv("TotResources_SubTransf4", TotResources_SubTransf4);
+writecsv("TotResources_SubTransf5", TotResources_SubTransf5);
+writecsv("TotResources_SubTransf6", TotResources_SubTransf6);

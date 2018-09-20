@@ -1,0 +1,133 @@
+using DataFrames, CSV, DataFramesMeta, DelimitedFiles, OdsIO
+
+#EXIOBASE
+
+#set main directory
+dir = "F:\\Documents\\GitHub\\ffsm-lca"
+
+#set ffsm outputs directory to import them
+cd(joinpath(dir, "input_data_ffsm"))
+
+#import the ffsm output file
+iFile = "FFSM_Outp_GE_data.csv"
+
+#read the file
+ffsm_outp_GE = convert(Array{Float64,2},readdlm(iFile,';',skipstart=1)[:,4:end])
+
+#read the file DataFrame style
+ffsm_outp_GE_df = CSV.read(iFile, delim = ";")
+
+
+#calculate products values for each policy
+
+#Index of the policies in each dataframe
+priProducts = ["BOF","BOR","BIBE"]
+secProducts = ["bois-energie","Fsciages","Rsciages","placages","pate","panneaux"]
+products    = vcat(priProducts,secProducts)
+policies = ["sp" "subcons" "exprestr" "subtransf" ; 1:9 10:18 19:27 28:36 ]
+
+policies_id = DataFrame(policies[2:size(policies,1),:], map(Symbol, policies[1,:]))
+
+	#make a dataframe to store the aggregated outputs
+	prod_cat = ["forestp_exp","woodp_loc","woodp_imp","pulp_loc","pulp_imp","fuelwood_loc"]
+	iot_products = zeros(size(policies,2),length(prod_cat))
+	iot_products = DataFrame([iot_products[:,i] for i =1:size(iot_products,2)], map(Symbol, prod_cat))
+
+#aggregate the outputs
+	# for each policy, each being a row in iot_products
+	for i=1:size(policies,2)
+		#calculate for each product category
+		# policies_id gives the coordinates of each policy in ffsm_outp_GE
+		#then, among these coordinates, those of the concerned products are kept
+
+		#the output of forest exports
+		iot_products[i,:forestp_exp] = sum(ffsm_outp_GE[policies_id[:,i][1:3], 3])
+		#[:,i] selects all the rows from the i policy column
+		#[1:3] are the first three rows, corresponding to primary products
+		# 3 is the column number in ffsm_outp_GE, corresponding to primary products exports
+
+		#the output of local wood production
+		iot_products[i,:woodp_loc] = sum(ffsm_outp_GE[policies_id[:,i][5:7],4])+ffsm_outp_GE[policies_id[:,i][9],4]
+
+		#the output of wood import
+		iot_products[i,:woodp_imp] = sum(ffsm_outp_GE[policies_id[:,i][5:7],5])+ffsm_outp_GE[policies_id[:,i][9],5]
+
+		#the output of local pulp production
+		iot_products[i,:pulp_loc] = ffsm_outp_GE[policies_id[:,i][8],4]
+
+		#the output of pulp import
+		iot_products[i,:pulp_imp] = ffsm_outp_GE[policies_id[:,i][8],5]
+
+		#the output of local fuelwood consumption
+		iot_products[i,:fuelwood_loc] = sum(ffsm_outp_GE[policies_id[:,i][5],4:5])
+
+	end
+
+#change working directory to the io_lca
+cd(joinpath(dir, "io_lca\\input_data_iot"))
+
+#import matrix index
+iFile2 = "types_version2.2.2.ods"
+
+#import specific sheets
+exb_index_countries  = ods_read(iFile2; sheetName="countries",retType="DataFrame")
+exb_index_industrytypes  = ods_read(iFile2; sheetName="industrytypes",retType="DataFrame")
+exb_index_finaldemandtypes  = ods_read(iFile2; sheetName="finaldemandtypes",retType="DataFrame")
+
+#determine product iot names and display order
+	#industry group display order
+	industry_disporder = [18 , 50 , 50 , 52 , 52 , 102 ]
+
+	#names
+	industry = Vector{String}(undef, length(industry_disporder))
+		for i=1:length(industry_disporder)
+		industry[i] .= exb_index_industrytypes[industry_disporder[i],:IndustryTypeName]
+		end
+
+	#countries display order
+	countries_disporder = [11, 11, 6, 11, 33, 11]
+
+	#countries
+	countries= Vector{String}(undef, length(countries_disporder))
+		for i=1:length(countries_disporder)
+		countries[i] .= exb_index_countries[countries_disporder[i], :CountryName]
+		end
+
+
+	#make a dataframe with the names and coordinates
+	iot_products_xy = DataFrame(Product = prod_cat, industry = industry , industry_do = industry_disporder , country = countries, country_do = countries_disporder , x = zeros(6), y = zeros(6))
+
+
+#rows : calculate according to Country display order and industry type display order
+	for i=1:size(iot_products_xy,1)
+		iot_products_xy[i,:x] = iot_products_xy[i,:industry_do] + (iot_products_xy[i,:country_do]-1)*size(exb_index_industrytypes,1)
+	end
+
+#column : calcate according to country display order in sheet countries and final demand display order in sheet finaldeamndtypes
+	for i=1:size(iot_products_xy,1)
+	iot_products_xy[i,:y] = 1 + (iot_products_xy[i,:country_do]-1)*size(exb_index_finaldemandtypes,1)
+	end
+
+#create blank matrix, from 1 to 4, for each policy
+finaldemand1 = zeros(7824,284)
+finaldemand2 = zeros(7824,284)
+finaldemand3 = zeros(7824,284)
+finaldemand4 = zeros(7824,284)
+
+#convert the x and y coordinates into integer otherwise not usable as index in the following loop
+product_x = convert(Array{Int64,1}, iot_products_xy[:x])
+product_y = convert(Array{Int64,1}, iot_products_xy[:y])
+
+#put product values from iot_products in appropriate matrix coordinates taken from iot_products_xy
+for i=1:size(iot_products_xy,1)
+	finaldemand1[product_x[i],product_y[i]] = iot_products[1,i]
+	finaldemand2[product_x[i],product_y[i]] = iot_products[2,i]
+	finaldemand3[product_x[i],product_y[i]] = iot_products[3,i]
+	finaldemand4[product_x[i],product_y[i]] = iot_products[4,i]
+end
+
+#write matrix
+writedlm(string("finaldemand_", policies[1,1],".csv"),finaldemand1, ';')
+writedlm(string("finaldemand_", policies[1,2],".csv"),finaldemand2, ';')
+writedlm(string("finaldemand_", policies[1,3],".csv"),finaldemand3, ';')
+writedlm(string("finaldemand_", policies[1,4],".csv"),finaldemand4, ';')

@@ -1,0 +1,10 @@
+#importing economic outputs
+outputfile = "Outputs GE synth.csv"
+output = convert(Array{Float64,2},readdlm(outputfile,';',skipstart=2)[:,5:end]);
+sp_output= output[1:9,:]
+subconso_output = output[10:18,:]
+exprestr_output = output[19:27,:]
+subtransf_output = output[28:36,:]
+
+#importing Life Cycle Inventories (LCI)
+LCI = convert
